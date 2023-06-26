@@ -1,0 +1,64 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+Vagrant.configure("2") do |config|
+
+  config.vm.define "static" do |static|
+    static.vm.box = "generic/debian11"
+    static.vm.network "private_network", ip: "192.168.10.10"
+    static.vm.synced_folder ".", "/vagrant"
+
+    static.vm.provider "virtualbox" do |vb|
+      vb.name = "task-2-static"
+      # Customize the amount of memory on the VM:
+      vb.memory = "512"
+    end
+
+    # Install apache2
+    static.vm.provision "shell", inline: <<-SHELL
+        sudo apt-get update
+        sudo apt-get install -y apache2 php libapache2-mod-php
+        sudo service apache2 restart
+    SHELL
+
+    # Config apache2
+    static.vm.provision "file", source: "index.html", destination: "/tmp/index.html"
+    static.vm.provision "shell", inline: "mv /tmp/index.html /var/www/html/"
+    static.vm.provision "shell", inline: <<-SHELL
+        sudo service apache2 restart
+    SHELL
+  end
+
+  config.vm.define "dynamic" do |dynamic|
+    dynamic.vm.box = "generic/debian11"
+    dynamic.vm.network "private_network", ip: "192.168.10.11"
+    dynamic.vm.synced_folder ".", "/vagrant"
+
+    dynamic.vm.provider "virtualbox" do |vb|
+      vb.name = "task-2-dynamic"
+      # Customize the amount of memory on the VM:
+      vb.memory = "512"
+    end
+
+    # Install apache2
+    dynamic.vm.provision "shell", inline: <<-SHELL
+        sudo apt-get update
+        sudo apt-get install -y apache2 php libapache2-mod-php
+        sudo service apache2 restart
+    SHELL
+
+    # Config apache2
+    dynamic.vm.provision "file", source: "index.php", destination: "/tmp/index.php"
+    dynamic.vm.provision "file", source: "php-site.conf", destination: "/tmp/php-site.conf"
+    dynamic.vm.provision "file", source: "000-default.conf", destination: "/tmp/000-default.conf"
+    dynamic.vm.provision "shell", inline: <<-SHELL
+        sudo mkdir /var/www/html/php/
+        sudo mv /tmp/index.html /var/www/html/
+        sudo mv /tmp/index.php /var/www/html/php/
+        sudo mv /tmp/php-site.conf /etc/apache2/sites-available/
+        sudo mv /tmp/000-default.conf /etc/apache2/sites-available/
+
+        sudo a2ensite php-site.conf
+        sudo systemctl restart apache2
+    SHELL
+  end
+end
