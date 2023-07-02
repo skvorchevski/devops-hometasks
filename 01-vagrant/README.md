@@ -1,0 +1,81 @@
+#Домашнее задание (не оценивается)
+- Инициализируйте локальный git-репозиторий
+- Создайте файл README.md с описанием проекта
+- Создайте следующие ветки 
+    - master (2 коммита)
+    - dev из ветки master (2 коммита из master + 2 дополнительных)
+    - features/dosmth (коммиты из dev + 1 дополнительный)
+    - hotfix/bugfix (2 коммита из master + 1 дополнительный)
+- Разыграйте следующие сценарии:
+    - Релиз:
+        - Все коммиты (кроме хотфикса) должны попасть в master
+    - Выпуск исправления:
+        - Изменения из hotfix/bugfix должны сначала попасть в master, а потом и в остальные ветки
+#Домашнее задание (не оценивается)
+- Зарегистрироваться на GitHub
+    - Добавить на GitHub SSH-ключ
+    - Создать на GitHub репозиторий
+    - Синхронизировать ваш локальный репозиторий с репозиторием в GitHub
+- GitLab CE *
+    - Установите локально (VirtualBox) GitLab CE
+    - Синхронизируйте ваши локальные репозитории с вашей версией GitLab
+#Домашнее задание 2
+- Создайте репозиторий devops-hometasks.
+- В репозитории devops-hometasks создайте директорию 01-vagrant
+- В поддиректории 1 создайте Vagrantfile для создания виртуальной машины VirtualBox с установленной ОС Debian.
+- С помощью Vagrantfile настройте виртуальную машину таким образом, чтобы на хост-машине при обращении на адрес http://localhost:8080 открывался статический HTML файл index.html, а при обращении на адрес http://localhost:8081 - динамический сайт index.php. Для работы динамического сайта нужен PHP любой версии.
+- Также в директории должны находится все файлы, необходимые для работы Vagrantfile.
+- В поддиректории 2 создайте Vagrantfile, который конфигурирует две виртуальныe машины:
+    - машина со статическим сайтом index.html
+    - машина с динмамическим сайтом index.php
+    - сайты должны открываться при обращении на ip адреса виртуальных машин по 80-му порту
+- Директорию .vagrant внесите в .gitignore.
+- Создайте в GitHub репозиторий devops-hometasks.
+- Синхронизируйте ваш локальный репозиторий с удаленным. Ссылку на репозиторий отправьте мне.
+- Ответьте на вопросы
+#Команды git
+- git branch branch1
+- git branch
+- git checkout branch1
+- git checkout -b branch2
+- git stash
+- git stash -u
+- git stash list
+- git stash show stash@{0}
+- git stash apply stash@{1}
+- git stash drop stash@{1}
+- git stash clear
+- git stash pop
+- git log --all --graph --online
+- git merge master
+- git merge master --no-ff --no-commit
+- git rm --cached file2
+- git rebase master
+- git branch -d branch2
+- git tag
+- git tag v1.1
+- git show v1.1
+- git tag --delete v1.1
+- git help merge
+- git remote add origin git@github.com:Fenikks/git_demo.git
+- git remote -v
+- git remote rename origin test
+- git push -u origin master
+- git remote show origin
+- git clone
+- git pull
+- git push origin v1.0
+
+#Команды vagrant
+- vagrant init
+- vagrant up
+- vagrant provision
+- vagrant up --provision
+- vagrant box add <box_name> <box_path>
+- vagrant ssh
+- vagrant suspend
+- vagrant halt
+- vagrant destroy
+- vagrant status
+- vagrant global-status
+- vagrant package
