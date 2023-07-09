@@ -1,0 +1,24 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+Vagrant.configure("2") do |config|
+
+  config.vm.define "master", primary: true do |master|
+    master.vm.box = "generic/debian11"
+    master.vm.synced_folder ".", "/vagrant"
+    master.vm.network "forwarded_port", guest: 80, host: 8080
+    master.vm.network "forwarded_port", guest: 8081, host: 8081
+    master.vm.network "private_network", ip: "192.168.50.4"
+
+    master.vm.provider "virtualbox" do |vb|
+      vb.name = "task-1-master"
+      # Customize the amount of memory on the VM:
+      vb.memory = "1024"
+    end
+
+    master.vm.provision "ansible_local" do |ansible|
+      ansible.limit = 'all'
+      ansible.playbook = "playbook.yaml"
+      ansible.inventory_path = "inventory"
+    end
+  end
+end

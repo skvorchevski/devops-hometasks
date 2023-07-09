@@ -1,0 +1,52 @@
+---
+- hosts: all
+  become: true
+
+  tasks:
+    - name: Install Apache
+      apt:
+        name: apache2
+        state: present
+        update_cache: true
+
+    - name: Install PHP
+      apt:
+        name: php
+        state: present
+        update_cache: true
+
+    - name: Add port 8081 to config Apache
+      shell: echo 'Listen 8081' >> /etc/apache2/ports.conf
+
+    - name: Creates directory for index.php
+      file:
+        path: /var/www/html/php/
+        state: directory
+
+    - name: Copy index.html
+      copy:
+        src: index.html
+        dest: /var/www/html/index.html
+
+    - name: Copy 000-default.conf
+      copy:
+        src: 000-default.conf
+        dest: /etc/apache2/sites-available/000-default.conf
+
+    - name: Copy index.php
+      copy:
+        src: index.php
+        dest: /var/www/html/php/index.php
+
+    - name: Copy php-site.conf
+      copy:
+        src: php-site.conf
+        dest: /etc/apache2/sites-available/php-site.conf
+
+    - name: Config php-site.conf
+      shell: a2ensite php-site.conf
+
+    - name: Reload Apache
+      service:
+        name: apache2
+        state: reloaded
