@@ -1,0 +1,21 @@
+---
+- name: Slave1 playbook
+  hosts: slave1
+  become: true
+
+  tasks:
+    - name: Install Apache
+      apt:
+        name: apache2
+        state: present
+        update_cache: true
+
+    - name: Copy index.html
+      copy:
+        src: index.html
+        dest: /var/www/html/index.html
+
+    - name: Reload Apache
+      service:
+        name: apache2
+        state: reloaded
