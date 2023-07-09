@@ -6,7 +6,7 @@
     - name: Install Apache
       apt:
         name: apache2
-        state: presentc
+        state: present
         update_cache: true
 
     - name: Install PHP
@@ -27,6 +27,11 @@
       copy:
         src: index.html
         dest: /var/www/html/index.html
+
+    - name: Copy 000-default.conf
+      copy:
+        src: 000-default.conf
+        dest: /etc/apache2/sites-available/000-default.conf
 
     - name: Copy index.php
       copy:
