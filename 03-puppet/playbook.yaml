@@ -1,0 +1,82 @@
+---
+- name: Ansible master config
+  hosts: master
+  become: true
+
+  tasks:
+    - name: Install packages
+      yum:
+        name:
+          - puppetserver
+          - vim
+          - git
+        state: present
+        update_cache: yes
+
+    - name: Copy puppetserver config
+      copy:
+        src: puppetserver
+        dest: /etc/sysconfig/puppetserver
+
+    - name: Add puppet to variable PATH
+      shell: export PATH=$PATH:/opt/puppetlabs/puppet/bin:/opt/puppetlabs/bin
+
+    - name: Disable firewalld
+      service:
+        name: firewalld
+        enabled: false
+        state: stopped
+
+    - name: Copy autosign.conf
+      copy:
+        src: autosign.conf
+        dest: /etc/puppetlabs/puppet/autosign.conf
+
+    - name: Install r10k gem
+      gem:
+        name: r10k
+        state: present
+
+    - name: Creates directory for r10k
+      file:
+        path: /etc/puppetlabs/r10k
+        state: directory
+
+    - name: Copy r10k.yaml
+      copy:
+        src: r10k.yaml
+        dest: /etc/puppetlabs/r10k/r10k.yaml
+
+- name: Ansible slave config
+  hosts: slave
+  become: true
+
+  tasks:
+    - name: Install packages
+      yum:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      loop:
+        - vim
+        - mc
+        - puppet-agent
+
+    - name: Added master to hosts
+      lineinfile:
+        path: /etc/hosts
+        line: '192.168.50.4 master.puppet'
+
+    - name: Add agent in config
+      blockinfile:
+        path: /etc/puppetlabs/puppet/puppet.conf
+        block: |
+          [agent]
+          server = master.puppet
+          runinterval = 1m
+
+    - name: Start puppet-agent
+      service:
+        name: puppet-agent
+        enabled: true
+        state: started
