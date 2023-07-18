@@ -70,7 +70,7 @@
         state: started
 
     - name: Get r10k modules
-      command: r10k deploy environment -p
+      command: /opt/puppetlabs/puppet/bin/r10k deploy environment -p
 
     - name: Add r10k cron job
       cron:
