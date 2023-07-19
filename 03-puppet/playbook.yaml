@@ -29,10 +29,16 @@
         state: present
         update_cache: yes
 
-    - name: Copy puppetserver config
-      copy:
-        src: puppetserver
-        dest: /etc/sysconfig/puppetserver
+    - name: Set memory limit for Puppet Server
+      lineinfile:
+        path: /etc/sysconfig/puppetserver
+        regexp: '^JAVA_ARGS='
+        line: 'JAVA_ARGS="-Xms512m -Xmx512m -Djruby.logger.class=com.puppetlabs.jruby_utils.jruby.Slf4jLogger"'
+
+#    - name: Copy puppetserver config
+#      copy:
+#        src: puppetserver
+#        dest: /etc/sysconfig/puppetserver
 
     - name: Added master to hosts
       lineinfile:
