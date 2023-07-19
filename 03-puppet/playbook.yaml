@@ -75,7 +75,9 @@
     - name: Add r10k cron job
       cron:
         name: "r10k deploy"
-        minute: "1"
+        minute: "*"
+        hour: "*"
+        user: root
         job: "/opt/puppetlabs/puppet/bin/r10k deploy environment -p"
 
 - name: Ansible slave config
@@ -92,20 +94,10 @@
         state: present
         disable_gpg_check: yes
 
-    - name: Copy index.html
-      copy:
-        src: index.html
-        dest: /tmp/index.html
-
     - name: Copy selinux config
       copy:
         src: config
         dest: /etc/selinux/config
-
-    - name: Copy index.php
-      copy:
-        src: index.php
-        dest: /tmp/index.php
 
     - name: Install packages
       yum:
