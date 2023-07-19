@@ -4,6 +4,22 @@
   become: true
 
   tasks:
+    - file:
+        path: '{{ item.fpath }}'
+        state: file
+        owner: vagrant
+        mode: u+rw,g-rwx,o-rwx
+      loop:
+        - { fpath: /home/vagrant/private_key_slave1 }
+        - { fpath: /home/vagrant/private_key_slave2 }
+
+    - name: Install Puppet
+      yum:
+        update_cache: yes
+        name: https://yum.puppet.com/puppet7-release-el-8.noarch.rpm
+        state: present
+        disable_gpg_check: yes
+
     - name: Install packages
       yum:
         name:
@@ -18,8 +34,10 @@
         src: puppetserver
         dest: /etc/sysconfig/puppetserver
 
-    - name: Add puppet to variable PATH
-      shell: export PATH=$PATH:/opt/puppetlabs/puppet/bin:/opt/puppetlabs/bin
+    - name: Added master to hosts
+      lineinfile:
+        path: /etc/hosts
+        line: '127.0.1.1 puppet'
 
     - name: Disable firewalld
       service:
@@ -32,10 +50,8 @@
         src: autosign.conf
         dest: /etc/puppetlabs/puppet/autosign.conf
 
-    - name: Install r10k gem
-      gem:
-        name: r10k
-        state: present
+    - name: Install r10k
+      shell: /opt/puppetlabs/puppet/bin/gem install r10k
 
     - name: Creates directory for r10k
       file:
@@ -47,11 +63,42 @@
         src: r10k.yaml
         dest: /etc/puppetlabs/r10k/r10k.yaml
 
+    - name: Start puppetserver
+      systemd:
+        name: puppetserver.service
+        enabled: true
+        state: started
+
+    - name: Get r10k modules
+      command: /opt/puppetlabs/puppet/bin/r10k deploy environment -p
+
+    - name: Add r10k cron job
+      cron:
+        name: "r10k deploy"
+        minute: "*"
+        hour: "*"
+        user: root
+        job: "/opt/puppetlabs/puppet/bin/r10k deploy environment -p"
+
 - name: Ansible slave config
-  hosts: slave
+  hosts:
+    - slave1
+    - slave2
   become: true
 
   tasks:
+    - name: Install Puppet
+      yum:
+        update_cache: yes
+        name: https://yum.puppet.com/puppet7-release-el-8.noarch.rpm
+        state: present
+        disable_gpg_check: yes
+
+    - name: Copy selinux config
+      copy:
+        src: config
+        dest: /etc/selinux/config
+
     - name: Install packages
       yum:
         name: "{{ item }}"
@@ -65,7 +112,7 @@
     - name: Added master to hosts
       lineinfile:
         path: /etc/hosts
-        line: '192.168.50.4 master.puppet'
+        line: '192.168.50.4 master.puppet puppet'
 
     - name: Add agent in config
       blockinfile:
@@ -74,9 +121,13 @@
           [agent]
           server = master.puppet
           runinterval = 1m
+          environment = production
+      notify:
+        - Start puppet-agent
 
+  handlers:
     - name: Start puppet-agent
       service:
-        name: puppet-agent
-        enabled: true
+        name: puppet
         state: started
+        enabled: yes

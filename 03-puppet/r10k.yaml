@@ -2,5 +2,5 @@
 
 :sources:
   :my-org:
-    remote: 'https://github.com/skvorchevski/devops-hometasks.git'
+    remote: 'https://github.com/skvorchevski/puppet.git'
     basedir: '/etc/puppetlabs/code/environments'
