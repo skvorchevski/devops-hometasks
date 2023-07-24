@@ -1,0 +1,59 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+Vagrant.configure("2") do |config|
+  config.vm.box = "generic/centos8s"
+  config.vm.synced_folder ".", "/vagrant", disabled: false
+
+  config.vm.define "slave1" do |slave1|
+    slave1.vm.network "private_network", ip: "192.168.50.5"
+    slave1.vm.hostname = "slave1.puppet"
+
+    slave1.vm.provider "virtualbox" do |vb|
+      vb.name = "task-1-slave1"
+      vb.memory = "512"
+    end
+  end
+
+  config.vm.define "slave2" do |slave2|
+    slave2.vm.network "private_network", ip: "192.168.50.6"
+    slave2.vm.hostname = "slave2.puppet"
+
+    slave2.vm.provider "virtualbox" do |vb|
+      vb.name = "task-1-slave2"
+      vb.memory = "512"
+    end
+  end
+
+  config.vm.define "mineserver" do |slave2|
+    slave2.vm.network "private_network", ip: "192.168.50.7"
+    slave2.vm.hostname = "mineserver.puppet"
+
+    slave2.vm.provider "virtualbox" do |vb|
+      vb.name = "task-1-mineserver"
+      vb.memory = "2000"
+    end
+  end
+
+  config.vm.define "master", primary: true do |master|
+    master.vm.network "private_network", ip: "192.168.50.4"
+    master.vm.hostname = "master.puppet"
+    master.vm.network "forwarded_port", guest: 80, host: 8080
+    master.vm.network "forwarded_port", guest: 8080, host: 8080
+    master.vm.network "forwarded_port", guest: 8081, host: 8081
+
+    master.vm.provider "virtualbox" do |vb|
+      vb.name = "task-1-master"
+      vb.memory = "1024"
+    end
+
+    master.vm.provision :file, source: '.vagrant/machines/slave1/virtualbox/private_key', destination: '/home/vagrant/private_key_slave1'
+    master.vm.provision :file, source: '.vagrant/machines/slave2/virtualbox/private_key', destination: '/home/vagrant/private_key_slave2'
+    master.vm.provision :file, source: '.vagrant/machines/mineserver/virtualbox/private_key', destination: '/home/vagrant/private_key_mineserver'
+
+    master.vm.provision "ansible_local" do |ansible|
+      ansible.limit = 'all'
+      ansible.inventory_path = "inventory"
+      ansible.playbook = "playbook.yaml"
+    end
+  end
+end
