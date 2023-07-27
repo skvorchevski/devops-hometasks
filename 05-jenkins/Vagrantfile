@@ -1,0 +1,23 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+Vagrant.configure("2") do |config|
+  config.vm.box = "generic/debian11"
+  config.vm.synced_folder ".", "/vagrant", disabled: false
+
+  config.vm.define "jenkins", primary: true do |jenkins|
+    jenkins.vm.network "private_network", ip: "192.168.50.4"
+    jenkins.vm.network "forwarded_port", guest: 8080, host: 8080
+    jenkins.vm.hostname = "master"
+
+    jenkins.vm.provider "virtualbox" do |vb|
+      vb.name = "jenkins.vm"
+      vb.memory = "2000"
+    end
+
+    jenkins.vm.provision "ansible_local" do |ansible|
+      ansible.limit = 'all'
+      ansible.inventory_path = "inventory"
+      ansible.playbook = "playbook.yaml"
+    end
+  end
+end

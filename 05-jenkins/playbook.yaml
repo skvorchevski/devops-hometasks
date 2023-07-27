@@ -1,0 +1,6 @@
+---
+- name: Master config
+  hosts: master
+  become: true
+  roles:
+    - jenkins

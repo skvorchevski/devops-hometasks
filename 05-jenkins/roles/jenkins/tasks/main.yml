@@ -1,0 +1,96 @@
+---
+- name: Install packages
+  apt:
+    update_cache: yes
+    pkg:
+      - git
+      - fontconfig
+      - openjdk-11-jre
+      - build-essential
+    state: present
+
+- name: Add Jenkins repository key
+  apt_key:
+    url: "{{ jenkins_key_url }}"
+    state: present
+
+- name: Add Jenkins repository to sources list
+  apt_repository:
+    repo: "deb {{ jenkins_repo_url }}"
+    state: present
+    filename: jenkins
+    update_cache: yes
+
+- name: Install Jenkins
+  apt:
+    name: jenkins
+    state: present
+    update_cache: yes
+
+- name: Create init.groovy.d directory
+  file:
+    path: /var/lib/jenkins/init.groovy.d
+    state: directory
+    owner: jenkins
+    group: jenkins
+
+- name: Copy scripts to init.groovy.d
+  copy:
+    src: "{{ item }}"
+    dest: /var/lib/jenkins/init.groovy.d/
+    owner: jenkins
+    group: jenkins
+  with_fileglob: "{{ jenkins_scripts_path }}"
+
+- name: Create jenkins_home directory
+  file:
+    path: "{{ jenkins_home }}"
+    owner: jenkins
+    group: jenkins
+    state: directory
+    recurse: yes
+
+- name: Disable setup wizard
+  lineinfile:
+    path: /lib/systemd/system/jenkins.service
+    line: 'Environment="JAVA_OPTS=-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"'
+    state: present
+    regexp: '^Environment="JAVA_OPTS=-Djava.awt.headless=true"'
+    backup: yes
+
+- name: Download jenkins-plugin-manager
+  get_url:
+    url: "{{ jenkins_plugin_manager_url }}"
+    dest: "{{ jenkins_home }}/jenkins-plugin-manager.jar"
+
+- name: Copy jenkins-plugins.yaml
+  copy:
+    src: "{{ jenkins_file_path }}/jenkins-plugins.yaml"
+    dest: "{{ jenkins_home }}/jenkins-plugins.yaml"
+    owner: jenkins
+    group: jenkins
+
+- name: Copy jenkins.yaml
+  copy:
+    src: "{{ jenkins_file_path }}/jenkins.yaml"
+    dest: "/var/lib/jenkins/jenkins.yaml"
+    owner: jenkins
+    group: jenkins
+
+- name: Creates directory for Jobs
+  file:
+    path: /var/lib/jenkins/jobs/gobuild
+    state: directory
+    owner: jenkins
+    group: jenkins
+
+- name: Copy job config.xml
+  copy:
+    src: "{{ jenkins_file_path }}/config.xml"
+    dest: "/var/lib/jenkins/jobs/gobuild/config.xml"
+    owner: jenkins
+    group: jenkins
+
+- name: Run jenkins-plugin-manager
+  command: "java -jar {{ jenkins_home }}/jenkins-plugin-manager.jar --jenkins-version 2.401.3 --plugin-file {{ jenkins_home }}/jenkins-plugins.yaml --plugin-download-directory /var/lib/jenkins/plugins"
+  notify: Restart Jenkins service
