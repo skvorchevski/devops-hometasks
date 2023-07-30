@@ -1,0 +1,65 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+Vagrant.configure("2") do |config|
+  config.vm.box = "generic/debian11"
+  config.vm.synced_folder ".", "/vagrant", disabled: false
+
+  config.vm.define "nexus" do |nexus|
+    nexus.vm.network "private_network", ip: "192.168.50.5"
+    nexus.vm.network "forwarded_port", guest: 8081, host: 8081
+    nexus.vm.hostname = "nexus"
+
+    nexus.vm.provider "virtualbox" do |vb|
+      vb.name = "nexus.vm"
+    end
+
+    nexus.vm.provision "ansible_local" do |ansible|
+      ansible.playbook = "playbook-nexus.yaml"
+      ansible.galaxy_role_file = "requirements.yml"
+    end
+  end
+
+  config.vm.define "staging" do |staging|
+    staging.vm.network "private_network", ip: "192.168.50.6"
+    staging.vm.hostname = "staging"
+
+    staging.vm.provider "virtualbox" do |vb|
+      vb.name = "staging.vm"
+      vb.memory = 1024
+    end
+
+    staging.vm.provision "ansible_local" do |ansible|
+      ansible.playbook = "playbook-production.yaml"
+    end
+  end
+
+  config.vm.define "production" do |production|
+    production.vm.network "private_network", ip: "192.168.50.7"
+    production.vm.hostname = "production"
+
+    production.vm.provider "virtualbox" do |vb|
+      vb.name = "production.vm"
+      vb.memory = 1024
+    end
+
+    production.vm.provision "ansible_local" do |ansible|
+      ansible.playbook = "playbook-production.yaml"
+    end
+  end
+
+  config.vm.define "jenkins", primary: true do |jenkins|
+    jenkins.vm.network "private_network", ip: "192.168.50.4"
+    jenkins.vm.network "forwarded_port", guest: 8080, host: 8080
+    jenkins.vm.hostname = "master"
+
+    jenkins.vm.provider "virtualbox" do |vb|
+      vb.name = "jenkins.vm"
+    end
+
+    jenkins.vm.provision "ansible_local" do |ansible|
+      ansible.limit = 'all'
+      ansible.inventory_path = "inventory"
+      ansible.playbook = "playbook-master.yaml"
+    end
+  end
+end
