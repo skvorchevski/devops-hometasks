@@ -1,6 +1,8 @@
 ---
 - name: Production config
-  hosts: production
+  hosts:
+    - staging
+    - production
   become: true
 
   tasks:
@@ -15,6 +17,8 @@
       copy:
         src: "wordcloud.service"
         dest: /etc/systemd/system/wordcloud.service
+        owner: vagrant
+        group: vagrant
       notify: Reload systemd
 
   handlers:

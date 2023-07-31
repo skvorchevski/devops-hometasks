@@ -12,6 +12,22 @@
 				<artifactNumToKeep>-1</artifactNumToKeep>
 			</strategy>
 		</jenkins.model.BuildDiscarderProperty>
+		<hudson.model.ParametersDefinitionProperty>
+			<parameterDefinitions>
+				<hudson.model.StringParameterDefinition>
+					<name>NEXUS_WCG_REPO_URL</name>
+					<description>URL for word-cloud-generator nexus repository</description>
+					<defaultValue>http://192.168.50.5:8081/repository/wcg-repo/1/word-cloud-generator</defaultValue>
+					<trim>true</trim>
+				</hudson.model.StringParameterDefinition>
+				<hudson.model.StringParameterDefinition>
+					<name>STAGING_WCG_URL</name>
+					<description>URL for word-cloud-generator app started on staging server</description>
+					<defaultValue>http://192.168.50.6:8888</defaultValue>
+					<trim>false</trim>
+				</hudson.model.StringParameterDefinition>
+			</parameterDefinitions>
+		</hudson.model.ParametersDefinitionProperty>
 	</properties>
 	<scm class="hudson.plugins.git.GitSCM" plugin="git@5.2.0">
 		<configVersion>2</configVersion>
@@ -68,8 +84,7 @@
 			<siteName>vagrant@192.168.50.6:22</siteName>
 			<command>sudo service wordcloud stop
 
-				curl -X GET &quot;http://192.168.50.5:8081/repository/wcg-repo/hometask/word-cloud-generator/1.$BUILD_NUMBER/word-cloud-generator-1.$BUILD_NUMBER.gz&quot;
-				-o /opt/wordcloud/word-cloud-generator.gz -u $NEXUS_USER:$NEXUS_PASSWORD
+				curl -X GET &quot;$NEXUS_WCG_REPO_URL/1.$BUILD_NUMBER/word-cloud-generator-1.$BUILD_NUMBER.gz&quot; -o /opt/wordcloud/word-cloud-generator.gz -u $NEXUS_USER:$NEXUS_PASSWORD
 				ls -l /opt/wordcloud
 				gunzip -f /opt/wordcloud/word-cloud-generator.gz
 				chmod +x /opt/wordcloud/word-cloud-generator
@@ -80,32 +95,27 @@
 			<hideCommand>true</hideCommand>
 		</org.jvnet.hudson.plugins.SSHBuilder>
 		<hudson.tasks.Shell>
-			<command>res=`curl -s -H &quot;Content-Type: application/json&quot; -d &apos;{&quot;text&quot;:&quot;ths is a really really really important thing
-				this is&quot;}&apos; http://192.168.50.5:8888/version | jq &apos;. | length&apos;`
-				if [ &quot;1&quot; != &quot;$res&quot; ]; then
+			<command>res=`curl -s $STAGING_WCG_URL/version | jq -r &apos;.version&apos;`
+				if [ &quot;1.$BUILD_NUMBER&quot; != &quot;$res&quot; ]; then
 				exit 99
 				fi
 
-				res=`curl -s -H &quot;Content-Type: application/json&quot; -d &apos;{&quot;text&quot;:&quot;ths is a really really really important thing this
-				is&quot;}&apos; http://192.168.50.5:8888/api | jq &apos;. | length&apos;`
+				res=`curl -s -H &quot;Content-Type: application/json&quot; -d &apos;{&quot;text&quot;:&quot;ths is a really really really important thing this is&quot;}&apos; http://192.168.50.6:8888/api | jq &apos;. | length&apos;`
 				if [ &quot;7&quot; != &quot;$res&quot; ]; then
 				exit 99
-				fi
-			</command>
+				fi</command>
 			<configuredLocalRules/>
 		</hudson.tasks.Shell>
 		<org.jvnet.hudson.plugins.SSHBuilder plugin="ssh@2.6.1">
 			<siteName>vagrant@192.168.50.7:22</siteName>
 			<command>sudo service wordcloud stop
 
-				curl -X GET &quot;http://192.168.50.5:8081/repository/wcg-repo/hometask/word-cloud-generator/1.$BUILD_NUMBER/word-cloud-generator-1.$BUILD_NUMBER.gz&quot;
-				-o /opt/wordcloud/word-cloud-generator.gz -u $NEXUS_USER:$NEXUS_PASSWORD
+				curl -X GET &quot;$NEXUS_WCG_REPO_URL/1.$BUILD_NUMBER/word-cloud-generator-1.$BUILD_NUMBER.gz&quot; -o /opt/wordcloud/word-cloud-generator.gz -u $NEXUS_USER:$NEXUS_PASSWORD
 				ls -l /opt/wordcloud
 				gunzip -f /opt/wordcloud/word-cloud-generator.gz
 				chmod +x /opt/wordcloud/word-cloud-generator
 
-				sudo service wordcloud start
-			</command>
+				sudo service wordcloud start</command>
 			<execEachLine>false</execEachLine>
 			<hideCommand>true</hideCommand>
 		</org.jvnet.hudson.plugins.SSHBuilder>
