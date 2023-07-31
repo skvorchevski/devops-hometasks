@@ -1,0 +1,28 @@
+---
+- name: Production config
+  hosts:
+    - staging
+    - production
+  become: true
+
+  tasks:
+    - name: Create wordcloud directory
+      file:
+        path: /opt/wordcloud
+        state: directory
+        owner: vagrant
+        group: vagrant
+
+    - name: Copy wordcloud.service
+      copy:
+        src: "wordcloud.service"
+        dest: /etc/systemd/system/wordcloud.service
+        owner: vagrant
+        group: vagrant
+      notify: Reload systemd
+
+  handlers:
+    - name: Reload systemd
+      become: true
+      systemd:
+        daemon_reload: yes

@@ -1,0 +1,49 @@
+---
+- name: Nexus config
+  hosts: nexus
+  become: true
+  roles:
+    - geerlingguy.apache
+    - geerlingguy.nexus3-oss
+
+  pre_tasks:
+    - name: Add key
+      apt_key:
+        url: https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public
+
+    - name: Add repository
+      apt_repository:
+        repo: deb https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/ buster main
+        state: present
+        update_cache: true
+
+    - name: Install Java
+      apt:
+        name: adoptopenjdk-8-hotspot
+        state: present
+
+  vars:
+    nexus_admin_password: "admin"
+    nexus_delete_default_repos: true
+    nexus_config_raw: true
+
+    nexus_repos_raw_hosted:
+      - name: wcg-repo
+        blob_store: default
+
+    nexus_roles:
+      - id: nx-uploader
+        name: nx-uploader
+        description: Role nx-uploader for word-cloud-generator
+        privileges:
+          - nx-repository-view-raw-wcg-repo-*
+        roles: []
+
+    nexus_local_users:
+      - username: nexus-wcg
+        password: "nexus-wcg"
+        first_name: Jenkins
+        last_name: CI
+        email: support@company.com
+        roles:
+          - nx-uploader
