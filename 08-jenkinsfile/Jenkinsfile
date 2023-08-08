@@ -103,12 +103,12 @@ pipeline {
         stage('Deploy to Production') {
             steps {
                 withCredentials([usernamePassword(credentialsId: "$NEXUS_CREDS_ID", usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASSWORD')]) {
-                    sh '''  ssh vagrant@PRODUCTION_IP "sudo service wordcloud stop"
-                            ssh vagrant@PRODUCTION_IP "curl -X GET $NEXUS_URL/repository/wcg-repo/pipeline/word-cloud-generator/1.$BUILD_NUMBER/word-cloud-generator-1.$BUILD_NUMBER.gz -o /opt/wordcloud/word-cloud-generator.gz -u $NEXUS_USER:$NEXUS_PASSWORD"
-                            ssh vagrant@PRODUCTION_IP "ls -l /opt/wordcloud"
-                            ssh vagrant@PRODUCTION_IP "gunzip -f /opt/wordcloud/word-cloud-generator.gz"
-                            ssh vagrant@PRODUCTION_IP "chmod +x /opt/wordcloud/word-cloud-generator"
-                            ssh vagrant@PRODUCTION_IP "sudo service wordcloud start"
+                    sh '''  ssh vagrant@$PRODUCTION_IP "sudo service wordcloud stop"
+                            ssh vagrant@$PRODUCTION_IP "curl -X GET $NEXUS_URL/repository/wcg-repo/pipeline/word-cloud-generator/1.$BUILD_NUMBER/word-cloud-generator-1.$BUILD_NUMBER.gz -o /opt/wordcloud/word-cloud-generator.gz -u $NEXUS_USER:$NEXUS_PASSWORD"
+                            ssh vagrant@$PRODUCTION_IP "ls -l /opt/wordcloud"
+                            ssh vagrant@$PRODUCTION_IP "gunzip -f /opt/wordcloud/word-cloud-generator.gz"
+                            ssh vagrant@$PRODUCTION_IP "chmod +x /opt/wordcloud/word-cloud-generator"
+                            ssh vagrant@$PRODUCTION_IP "sudo service wordcloud start"
                     '''
                 }
             }
