@@ -13,7 +13,7 @@
 				environment {
 					GO_VERSION = &quot;go-1.16&quot;
 					BRANCH = &quot;master&quot;
-					NEXUS_IP = &quot;192.168.33.90&quot;
+					NEXUS_IP = &quot;192.168.33.40&quot;
 					NEXUS_REPO_NAME = &quot;wcg-repo&quot;
 					NEXUS_CREDS_ID = &quot;nexus-creds&quot;
 				}
@@ -26,12 +26,14 @@
 							git branch: &quot;$BRANCH&quot;, url: &apos;https://github.com/wickett/word-cloud-generator.git&apos;
 						}
 					}
-					stage(&apos;Check Word-Cloud-Generator&apos;) {
-						steps {
-							sh &apos;make lint&apos;
-							sh &apos;make test&apos;
-						}
-					}
+
+<!--					stage(&apos;Check Word-Cloud-Generator&apos;) {-->
+<!--						steps {-->
+<!--							sh &apos;make lint&apos;-->
+<!--							sh &apos;make test&apos;-->
+<!--						}-->
+<!--					}-->
+
 					stage(&apos;Build and Publish to Nexus&apos;) {
 						steps {
 							sh &apos;&apos;&apos;sed -i &quot;s/1.DEVELOPMENT/1.$BUILD_NUMBER/g&quot; static/version

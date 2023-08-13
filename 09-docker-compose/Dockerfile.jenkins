@@ -19,6 +19,14 @@ COPY --chown=jenkins:jenkins /jenkins-files/jenkins.yaml /var/jenkins_home/jenki
 # Скопировать настройки задания
 COPY --chown=jenkins:jenkins /jenkins-files/config.xml /var/jenkins_home/jobs/pipeline/config.xml
 
+# Пробросить порт
 EXPOSE 8080
+
+# Установить необходимые пакеты
+USER root
+RUN apt-get update && \
+    apt-get install -y jq && \
+    apt-get clean
+USER jenkins
 
 CMD ["java", "-jar", "/usr/share/jenkins/jenkins.war"]

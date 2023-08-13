@@ -30,6 +30,7 @@ Vagrant.configure("2") do |config|
 
         apt-get update
         VERSION_STRING="5:20.10.24~3-0~debian-buster"
+        apt-get install -y docker-compose
         apt-get install -y docker-ce=$VERSION_STRING docker-ce-cli=$VERSION_STRING containerd.io docker-buildx-plugin docker-compose-plugin
         #apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
