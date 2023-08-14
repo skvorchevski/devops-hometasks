@@ -1,0 +1,32 @@
+FROM jenkins/jenkins:lts
+
+# Отключить стартовое окно
+ENV JAVA_OPTS="-Djenkins.install.runSetupWizard=false -Dhudson.security.csrf.GlobalCrumbIssuerConfiguration.DISABLE_CSRF_PROTECTION=true"
+RUN echo 2.0 > /usr/share/jenkins/ref/jenkins.install.UpgradeWizard.state
+
+# Добавить пользователя
+COPY --chown=jenkins:jenkins /jenkins-files/scripts/02-admin-user.groovy /usr/share/jenkins/ref/init.groovy.d/02-admin-user.groovy
+
+# Скопировать список плагинов
+COPY --chown=jenkins:jenkins /jenkins-files/plugins.txt /usr/share/jenkins/ref/plugins.txt
+
+# Установить плагины
+RUN jenkins-plugin-cli -f /usr/share/jenkins/ref/plugins.txt
+
+# Скопировать настройки плагина ConfigurationAsCode
+COPY --chown=jenkins:jenkins /jenkins-files/jenkins.yaml /var/jenkins_home/jenkins.yaml
+
+# Скопировать настройки задания
+COPY --chown=jenkins:jenkins /jenkins-files/config.xml /var/jenkins_home/jobs/pipeline/config.xml
+
+# Пробросить порт
+EXPOSE 8080
+
+# Установить необходимые пакеты
+USER root
+RUN apt-get update && \
+    apt-get install -y jq make build-essential && \
+    apt-get clean
+USER jenkins
+
+CMD ["java", "-jar", "/usr/share/jenkins/jenkins.war"]

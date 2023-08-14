@@ -1,0 +1,23 @@
+---
+version: '3.3'
+services:
+  jenkins:
+    build:
+      context: .
+      dockerfile: Dockerfile.jenkins
+    networks:
+      - local
+    ports:
+      - "8080:8080"
+    depends_on:
+      - nexus
+  nexus:
+    build:
+      context: .
+      dockerfile: Dockerfile.nexus
+    networks:
+      - local
+    ports:
+      - "8081:8081"
+networks:
+  local: {}
