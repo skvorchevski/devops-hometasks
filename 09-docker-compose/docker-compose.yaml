@@ -19,5 +19,10 @@ services:
       - local
     ports:
       - "8081:8081"
+    healthcheck:
+      test: curl -f http://localhost:8081||exit 1
+      interval: 20s
+      timeout: 10s
+      retries: 3
 networks:
   local: {}

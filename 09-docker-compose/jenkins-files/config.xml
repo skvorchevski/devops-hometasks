@@ -27,12 +27,12 @@
 						}
 					}
 
-<!--					stage(&apos;Check Word-Cloud-Generator&apos;) {-->
-<!--						steps {-->
-<!--							sh &apos;make lint&apos;-->
-<!--							sh &apos;make test&apos;-->
-<!--						}-->
-<!--					}-->
+					stage(&apos;Check Word-Cloud-Generator&apos;) {
+						steps {
+							sh &apos;make lint&apos;
+							sh &apos;make test&apos;
+						}
+					}
 
 					stage(&apos;Build and Publish to Nexus&apos;) {
 						steps {

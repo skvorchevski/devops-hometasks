@@ -25,7 +25,7 @@ EXPOSE 8080
 # Установить необходимые пакеты
 USER root
 RUN apt-get update && \
-    apt-get install -y jq && \
+    apt-get install -y jq make build-essential && \
     apt-get clean
 USER jenkins
 
