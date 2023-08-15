@@ -8,17 +8,17 @@
   pre_tasks:
     - name: Add key
       apt_key:
-        url: https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public
+        url: https://download.bell-sw.com/pki/GPG-KEY-bellsoft
 
     - name: Add repository
       apt_repository:
-        repo: deb https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/ buster main
+        repo: deb [arch=amd64] https://apt.bell-sw.com/ stable main
         state: present
         update_cache: true
 
     - name: Install Java
       apt:
-        name: adoptopenjdk-8-hotspot
+        name: bellsoft-java8-full
         state: present
 
   vars:
@@ -39,8 +39,8 @@
         roles: []
 
     nexus_local_users:
-      - username: nexus-wcg
-        password: "nexus-wcg"
+      - username: "{{ wcg_username }}"
+        password: "{{ wcg_password }}"
         first_name: Jenkins
         last_name: CI
         email: support@company.com

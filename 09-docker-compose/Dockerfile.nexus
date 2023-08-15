@@ -1,18 +1,26 @@
 FROM debian
 
+# Установить необходимые пакеты
 RUN apt-get update && \
     apt-get install -y vim mc ansible sshpass git gnupg rsync bash && \
     apt-get clean
 
+# Скопировать файлы необходимые для ansible
 COPY /nexus-files/playbook-nexus.yaml /vagrant/playbook-nexus.yaml
 COPY /nexus-files/requirements.yml /vagrant/requirements.yml
 COPY /nexus-files/inventory /vagrant/inventory
 
 WORKDIR /vagrant/
 
-RUN ansible-galaxy install -r requirements.yml
-RUN ansible-playbook -i inventory playbook-nexus.yaml
+# Nexus credential
+ARG nexus_wcg_username=nexus-wcg
+ARG nexus_wcg_password=nexus-wcg
 
+# Запуск ansible playbook
+RUN ansible-galaxy install -r requirements.yml
+RUN ansible-playbook -i inventory playbook-nexus.yaml -e "wcg_username=$nexus_wcg_username wcg_password=$nexus_wcg_password"
+
+# Пробросить порт
 EXPOSE 8081
 
 CMD ["sh", "-c", "/opt/nexus-latest/bin/nexus run"]
