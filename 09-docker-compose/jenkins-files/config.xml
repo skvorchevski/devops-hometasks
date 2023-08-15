@@ -13,7 +13,7 @@
 				environment {
 					GO_VERSION = &quot;go-1.16&quot;
 					BRANCH = &quot;master&quot;
-					NEXUS_IP = &quot;192.168.33.40&quot;
+					NEXUS_IP = &quot;nexus&quot;
 					NEXUS_REPO_NAME = &quot;wcg-repo&quot;
 					NEXUS_CREDS_ID = &quot;nexus-creds&quot;
 				}
