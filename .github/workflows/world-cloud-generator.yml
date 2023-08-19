@@ -6,7 +6,7 @@ on:
 
 env:
   IMAGE_NAME: wcg
-  REPO_OWNER: ${{ github.GITHUB_REPOSITORY_OWNER }}
+  REPO_OWNER: ${{ github.repository_owner }}
   DOCKER_TAG: ${{ github.sha }}
 
 jobs:
@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Print env
-        run: echo "repo_owner:= $REPO_OWNER  docker_tag:= $DOCKER_TAG"
+        run: echo "github_actor:=${{ github.actor }} repo_owner:= $REPO_OWNER  docker_tag:= $DOCKER_TAG"
 
       - name: Get Word-Cloud-Generator
         uses: actions/checkout@v3
