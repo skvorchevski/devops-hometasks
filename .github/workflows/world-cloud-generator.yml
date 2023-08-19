@@ -1,0 +1,39 @@
+name: WCG CI
+
+on:
+  push:
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: wcg
+  REPO_OWNER: ${{ env.GITHUB_REPOSITORY_OWNER }}
+  DOCKER_TAG: ${{ github.sha }}
+
+jobs:
+  build-and-push:
+    runs-on: self-hosted
+
+    steps:
+      - name: Print env
+        run: echo "repo_owner:= $REPO_OWNER  docker_tag:= $DOCKER_TAG"
+
+      - name: Get Word-Cloud-Generator
+        uses: actions/checkout@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.ACTION_TOKEN }}
+
+      - name: Build and Push Docker Image
+        id: docker_build
+        uses: docker/build-push-action@v4
+        with:
+          context: ./07-docker
+          file: ./07-docker/Dockerfile.multi
+          push: true
+          tags: |
+            ghcr.io/${{ env.REPO_OWNER }}/${{ env.IMAGE_NAME }}:${{ env.DOCKER_TAG }}
+            ghcr.io/${{ env.REPO_OWNER }}/${{ env.IMAGE_NAME }}:latest
