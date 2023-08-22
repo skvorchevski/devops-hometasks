@@ -6,7 +6,7 @@ on:
 
 env:
   IMAGE_NAME: wcg
-  REPO_OWNER: ${{ github.repository_owner }}
+  REPO_OWNER: SkvorchevskI
   DOCKER_TAG: ${{ github.sha }}
 
 jobs:
