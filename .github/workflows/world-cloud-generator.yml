@@ -17,8 +17,11 @@ jobs:
       packages: write
 
     steps:
+      - name: Add new git repository_owner
+        run: echo "REPO_OWNER_LC=${REPO_OWNER,,}" >>${GITHUB_ENV}
+
       - name: Print env
-        run: echo "github_actor:=${{ github.actor }} repo_owner:= $REPO_OWNER  docker_tag:= $DOCKER_TAG"
+        run: echo "github_actor:=${{ github.actor }} repo_owner:= $REPO_OWNER repo_owner_lc:= $REPO_OWNER_LC  docker_tag:= $DOCKER_TAG"
 
       - name: Get Word-Cloud-Generator
         uses: actions/checkout@v3
@@ -38,5 +41,5 @@ jobs:
           file: ./07-docker/Dockerfile.multi
           push: true
           tags: |
-            ghcr.io/${{ env.REPO_OWNER }}/${{ env.IMAGE_NAME }}:${{ env.DOCKER_TAG }}
-            ghcr.io/${{ env.REPO_OWNER }}/${{ env.IMAGE_NAME }}:latest
+            ghcr.io/${{ env.REPO_OWNER_LC }}/${{ env.IMAGE_NAME }}:${{ env.DOCKER_TAG }}
+            ghcr.io/${{ env.REPO_OWNER_LC }}/${{ env.IMAGE_NAME }}:latest
