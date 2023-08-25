@@ -1,0 +1,26 @@
+replicaCount: 1
+
+deploy:
+  name: wcg-deployment
+
+service:
+  name: wcg-service
+  type: ClusterIP
+  port: 8888
+
+container:
+  name: wcg
+  label:
+    key: app
+    value: word-cloud-generator
+  port: 8888
+
+image:
+  repository: ghcr.io/skvorchevski/wcg
+  tag: latest
+
+ingress:
+  name: wcg-ingress
+  host: sites.local
+  path: /wcg
+  pathType: Prefix
