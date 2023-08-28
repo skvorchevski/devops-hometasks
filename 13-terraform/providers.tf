@@ -1,14 +1,20 @@
 terraform {
   required_providers {
     kubernetes = {
-      source = "hashicorp/kubernetes"
+      source  = "hashicorp/kubernetes"
       version = "2.23.0"
     }
 
     github = {
-      source = "integrations/github"
+      source  = "integrations/github"
       version = "5.34.0"
     }
+  }
+
+  backend "kubernetes" {
+    secret_suffix = "wcg-state"
+    config_path   = "~/.kube/config"
+    namespace     = "kube-system"
   }
 }
 
@@ -17,5 +23,5 @@ provider "kubernetes" {
 }
 
 provider "github" {
-  token = ""
+  token = var.github_token
 }
