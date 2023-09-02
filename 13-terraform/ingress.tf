@@ -1,11 +1,7 @@
-resource "kubernetes_ingress" "wcg-ingress" {
-  count = var.create_index ? 1 : 0
-
+resource "kubernetes_ingress_v1" "wcg-ingress" {
   metadata {
-    name      = "wcg-ingress"
-    namespace = kubernetes_namespace.wsg-ns[count.index].metadata[0].name
+    name = "wcg-ingress"
   }
-
   spec {
     rule {
       host = var.ingress_host
@@ -13,10 +9,15 @@ resource "kubernetes_ingress" "wcg-ingress" {
       http {
         path {
           path = var.ingress_path
+          path_type = var.ingress_path_type
 
           backend {
-            service_name = "wcg-service"
-            service_port = var.service_port
+            service {
+              name = "wcg-service"
+              port {
+                number = var.service_port
+              }
+            }
           }
         }
       }
