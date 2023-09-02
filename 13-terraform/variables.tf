@@ -70,10 +70,10 @@ variable "create_index" {
 
 variable "github_token" {
   type    = string
-  default = "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"
+  default = "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"
 }
 
-variable "github_repository_url" {
+variable "github_repository" {
   type    = string
-  default = "https://github.com/skvorchevski/devops-hometasks"
+  default = "devops-hometasks"
 }
