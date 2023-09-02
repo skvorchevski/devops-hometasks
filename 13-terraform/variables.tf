@@ -70,7 +70,8 @@ variable "create_index" {
 
 variable "github_token" {
   type    = string
-  default = "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"
+  sensitive = true
+  default = "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"
 }
 
 variable "github_repository" {
