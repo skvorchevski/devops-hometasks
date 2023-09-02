@@ -4,9 +4,6 @@ resource "kubernetes_ingress" "wcg-ingress" {
   metadata {
     name      = "wcg-ingress"
     namespace = kubernetes_namespace.wsg-ns[count.index].metadata[0].name
-    annotations = {
-      "nginx.ingress.kubernetes.io/rewrite-target" = "/"
-    }
   }
 
   spec {
@@ -15,7 +12,7 @@ resource "kubernetes_ingress" "wcg-ingress" {
 
       http {
         path {
-          path      = var.ingress_path
+          path = var.ingress_path
 
           backend {
             service_name = "wcg-service"
