@@ -1,6 +1,6 @@
 resource "kubernetes_service" "wcg-service" {
   metadata {
-    name      = "wcg-service"
+    name = var.service_name
   }
   spec {
     selector = {
