@@ -1,3 +1,12 @@
+###################################################
+## DEPLOYMENT VARIABLES
+###################################################
+
+variable "deploy_name" {
+  type    = string
+  default = "wcg-deployment"
+}
+
 variable "replicaCount" {
   type    = number
   default = 1
@@ -28,6 +37,15 @@ variable "container_port" {
   default = 8888
 }
 
+###################################################
+## SERVICE VARIABLES
+###################################################
+
+variable "service_name" {
+  type    = string
+  default = "wcg-service"
+}
+
 variable "service_port" {
   type    = number
   default = 8888
@@ -36,6 +54,15 @@ variable "service_port" {
 variable "service_type" {
   type    = string
   default = "ClusterIP"
+}
+
+###################################################
+## INGRESS VARIABLES
+###################################################
+
+variable "ingress_name" {
+  type    = string
+  default = "wcg-ingress"
 }
 
 variable "ingress_host" {
@@ -53,6 +80,10 @@ variable "ingress_path_type" {
   default = "Prefix"
 }
 
+###################################################
+## LABEL VARIABLES
+###################################################
+
 variable "env" {
   type    = string
   default = "dev"
@@ -68,10 +99,14 @@ variable "create_index" {
   default = true
 }
 
+###################################################
+## GITHUB VARIABLES
+###################################################
+
 variable "github_token" {
-  type    = string
+  type      = string
   sensitive = true
-  default = "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"
+  default   = "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"
 }
 
 variable "github_repository" {
