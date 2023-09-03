@@ -1,6 +1,6 @@
 resource "kubernetes_deployment" "wcg-deployment" {
   metadata {
-    name      = "wcg-deployment"
+    name = var.deploy_name
   }
 
   spec {
