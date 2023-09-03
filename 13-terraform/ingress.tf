@@ -1,7 +1,8 @@
 resource "kubernetes_ingress_v1" "wcg-ingress" {
   metadata {
-    name = "wcg-ingress"
+    name = var.ingress_name
   }
+
   spec {
     rule {
       host = var.ingress_host
@@ -13,7 +14,7 @@ resource "kubernetes_ingress_v1" "wcg-ingress" {
 
           backend {
             service {
-              name = "wcg-service"
+              name = var.service_name
               port {
                 number = var.service_port
               }
