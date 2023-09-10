@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: wcg-app
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: wcg
+
+  source:
+    repoURL: 'https://skvorchevski.github.io/devops-hometasks/'
+    targetRevision: '*'
+    chart: wcg
+    helm:
+      values: |
+
+
+  destination:
+    namespace: default
+    server: https://kubernetes.default.svc
+
+  # Sync policy
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
