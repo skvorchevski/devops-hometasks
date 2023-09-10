@@ -20,8 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: |
-        - read
-        - write
+        read
+        write
       packages: write
 
     steps:
