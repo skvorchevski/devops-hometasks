@@ -2,17 +2,17 @@ apiVersion: v1
 entries:
   wcg:
   - apiVersion: v2
-    appVersion: 1.0.0
-    created: "2023-09-10T16:32:48.159500186Z"
+    appVersion: 0.6.0
+    created: "2023-09-10T17:21:01.197238187Z"
     description: A Helm chart for word-cloud-generator
-    digest: 586f728f487eb3a6b0bd67c6cc5d34aacfaecf16f95cc81f9ec0dc62fe3c5194
+    digest: 6e763aae4bd3646df41ff29425c5c9cfb7b03dd0e7468fed6fee26175ac806bd
     name: wcg
     urls:
-    - https://skvorchevski.github.io/devops-hometasks/charts/wcg-1.0.0.tgz
-    version: 1.0.0
+    - https://skvorchevski.github.io/devops-hometasks/charts/wcg-0.6.0.tgz
+    version: 0.6.0
   - apiVersion: v2
     appVersion: 0.5.0
-    created: "2023-09-10T16:32:48.159262583Z"
+    created: "2023-09-10T17:21:01.196016617Z"
     description: A Helm chart for word-cloud-generator
     digest: 805a5422878df57b501fd523c8539eaf8c393efaa570952ab22c7e2870c6e824
     name: wcg
@@ -21,11 +21,11 @@ entries:
     version: 0.5.0
   - apiVersion: v2
     appVersion: 0.4.0
-    created: "2023-09-10T16:32:48.15901458Z"
+    created: "2023-09-10T17:21:01.195605193Z"
     description: A Helm chart for word-cloud-generator
     digest: 9fe9814ed655284c95d8ef5198f065808f5c59d7f8e6371eb23f28f998ba6be3
     name: wcg
     urls:
     - https://skvorchevski.github.io/devops-hometasks/charts/wcg-0.4.0.tgz
     version: 0.4.0
-generated: "2023-09-10T16:32:48.158557874Z"
+generated: "2023-09-10T17:21:01.194927488Z"
