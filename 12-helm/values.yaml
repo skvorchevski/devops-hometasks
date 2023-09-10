@@ -17,7 +17,7 @@ container:
 
 image:
   repository: ghcr.io/skvorchevski/wcg
-  tag: latest
+  tag: ""
 
 ingress:
   name: wcg-ingress

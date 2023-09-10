@@ -2,21 +2,54 @@ name: WCG CI
 
 on:
   push:
+    branches:
+      - master
+    paths:
+      - '07-docker/**'
+      - '12-helm/**'
   workflow_dispatch:
 
 env:
   IMAGE_NAME: wcg
   REPO_OWNER: ${{ github.repository_owner }}
   DOCKER_TAG: ${{ github.sha }}
+  GITHUB_PAGES_URL: https://skvorchevski.github.io/devops-hometasks/
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents:
+        - read
+        - write
       packages: write
 
     steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@1.64.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: false
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+
+      - name: Test helm chart
+        run: helm lint 12-helm/wcg
+
+      - name: Helm package
+        run: helm package 12-helm/ --version ${{ steps.tag_version.outputs.new_tag }} --app-version ${{ steps.tag_version.outputs.new_tag }} -d charts
+
+      - name: Update help index.yaml
+        run: helm repo index /charts --url ${{ env.GITHUB_PAGES_URL }} .
+
+      - name: Commit helm package
+        uses: stefanzweifel/git-auto-commit-action@v4
+
       - name: Add new git repository_owner
         run: echo "REPO_OWNER_LC=${REPO_OWNER,,}" >>${GITHUB_ENV}
 
@@ -41,5 +74,6 @@ jobs:
           file: ./07-docker/Dockerfile.multi
           push: true
           tags: |
-            ghcr.io/${{ env.REPO_OWNER_LC }}/${{ env.IMAGE_NAME }}:${{ env.DOCKER_TAG }}
             ghcr.io/${{ env.REPO_OWNER_LC }}/${{ env.IMAGE_NAME }}:latest
+            ghcr.io/${{ env.REPO_OWNER_LC }}/${{ env.IMAGE_NAME }}:${{ env.DOCKER_TAG }}
+            ghcr.io/${{ env.REPO_OWNER_LC }}/${{ env.IMAGE_NAME }}:${{ steps.tag_version.outputs.new_tag }}
