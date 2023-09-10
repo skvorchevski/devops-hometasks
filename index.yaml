@@ -3,11 +3,20 @@ entries:
   wcg:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2023-09-10T18:48:30.2806075+03:00"
+    created: "2023-09-10T16:28:01.907547961Z"
     description: A Helm chart for word-cloud-generator
     digest: 586f728f487eb3a6b0bd67c6cc5d34aacfaecf16f95cc81f9ec0dc62fe3c5194
     name: wcg
     urls:
-    - charts/wcg-1.0.0.tgz
+    - https://skvorchevski.github.io/devops-hometasks/charts/wcg-1.0.0.tgz
     version: 1.0.0
-generated: "2023-09-10T18:48:30.2796371+03:00"
+  - apiVersion: v2
+    appVersion: 0.4.0
+    created: "2023-09-10T16:28:01.906991257Z"
+    description: A Helm chart for word-cloud-generator
+    digest: 9fe9814ed655284c95d8ef5198f065808f5c59d7f8e6371eb23f28f998ba6be3
+    name: wcg
+    urls:
+    - https://skvorchevski.github.io/devops-hometasks/charts/wcg-0.4.0.tgz
+    version: 0.4.0
+generated: "2023-09-10T16:28:01.906581054Z"
